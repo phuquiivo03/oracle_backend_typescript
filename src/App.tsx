@@ -1,6 +1,7 @@
 import './App.css'
 import { useEffect} from 'react'
 import { cities } from './controller/data'
+import { useInterval } from './controller/hooks'
 import { get_city, get_weather } from './controller/weather-api'
 import { add_city_contract_call, update_weather_contract_call } from './controller/rpc-client';
 
@@ -32,9 +33,10 @@ function App() {
     })
   }
 
-  // useInterval(()=> {
-  //   console.log("loop")
-  // }, 1000)
+  useInterval(()=> {
+    update_weather()
+    update_data_to_oracle()
+  }, 600000)
 
   return (
     <>

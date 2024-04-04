@@ -17,11 +17,11 @@ type WeatherObject = {
     cloud: number,
 }
 
-const package_id = "0x35364119aa41eb4e3a7291a1d681dfad45ec8de53bc07b2cc834fa04a847a4b2"
-const weather_oracle = "0x7c5ba461de301b69bffd7093e0abed6862eec833ccbf058c30947626af5757f9"
-const admin_cap = "0x00a9d5e31e50819ee153ebf189e7fd3c72449010478799e689e3387081afa2d8"
+const package_id = "0xcec636594c25ea30ff0cadcabf8d92e3e37aad966722e68fbaa63adc00b32a9b"
+const weather_oracle = "0xd88aa2be6c001299004b1c22bb85cd45b0606e174e9a21ebdc5f36fbde7c3f6c"
+const admin_cap = "0xda3c87f45f383de358e66dcd8de60a50d32c6b712480f255601c1ff977a65e78"
 const private_key = "e9dba25e2c1999461f8cf27cf137d4218c9bc1fb425ea7c36a19b92cec0efe3b"
-const rpcUrl = getFullnodeUrl('devnet');
+const rpcUrl = getFullnodeUrl('testnet');
 const client = new SuiClient({ url: rpcUrl });
 let keypair = new Ed25519Keypair();
 keypair = Ed25519Keypair.fromSecretKey(fromHEX(private_key));
@@ -46,9 +46,7 @@ export const add_city_contract_call = async (
                 transaction_block.pure.string(city.name),
                 transaction_block.pure.string(city.country),
                 transaction_block.pure.u32(city.lat),
-                transaction_block.pure.bool(false),
-                transaction_block.pure.u32(city.lon),
-                transaction_block.pure.bool(false)
+                transaction_block.pure.u32(city.lon)
             ]
         })  
     })
@@ -68,9 +66,11 @@ export const update_weather_contract_call = async (
         lon: number, 
         lat: number, 
         country: string, 
-        windSpeed: number, 
+        wind_speed: number, 
         temp: number, 
-        humidity: number, 
+        wind_deg: string, 
+        rain_fall: string, 
+        is_rain: boolean,
         visibility: number
         cloud: number}[]
     )=> {
@@ -83,15 +83,13 @@ export const update_weather_contract_call = async (
                 transaction_block.object(admin_cap), 
                 transaction_block.object(weather_oracle),
                 transaction_block.pure.u32(city.id),
-                transaction_block.pure.u16(1),
                 transaction_block.pure.u32(city.temp),
-                transaction_block.pure.u32(1),
-                transaction_block.pure.u8(city.humidity),
                 transaction_block.pure.u16(city.visibility),
-                transaction_block.pure.u16(city.windSpeed),
-                transaction_block.pure.u16(1),
+                transaction_block.pure.u16(city.wind_speed),
+                transaction_block.pure.string(city.wind_deg),
                 transaction_block.pure.u8(city.cloud),
-                transaction_block.pure.u32(1000),
+                transaction_block.pure.bool(city.is_rain),
+                transaction_block.pure.string(city.rain_fall),
             ]
         })
     })

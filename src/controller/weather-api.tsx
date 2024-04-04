@@ -20,23 +20,37 @@ export const get_weather = (city: {
     lon: number, 
     lat: number, 
     country: string, 
-    windSpeed: number, 
+    wind_speed: number, 
     temp: number, 
-    humidity: number, 
     visibility: number
-    cloud: number
+    cloud: number,
+    is_rain: boolean,
+    rain_fall: string,
+    wind_deg: string
 }) => {
     axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=140654694180271ef8be6e6a87799a22`)
         .then(response => {
             let data = response.data
-            city.windSpeed =  Math.floor(data.wind.speed * 10),
             city.temp = Number(parseInt(data.main?.temp) >0? parseInt(data.main?.temp):0),
-            city.humidity = Number(parseInt(data.main?.humidity) >0? parseInt(data.main?.humidity):0),
             city.cloud = Number(parseInt(data.clouds?.all) >0? parseInt(data.clouds?.all):0),
-            city.visibility = Number(parseInt(data.visibility) >0? parseInt(data.visibility):0)
+            city.is_rain = data.weather[0].main =='Rain'? true : false,
+            city.rain_fall = data.rain? converse_rain_fall(data.rain["1h"]) : "none",
+            city.wind_deg = converse_deg(data.wind.deg)
+            city.wind_speed =  Math.floor(data.wind.speed * 10),
+            city.visibility= Number(parseInt(data.visibility) >0? parseInt(data.visibility):0)
         })
         .catch(error => {
         console.error('There was an error!', error);
         });
+}
+
+function converse_rain_fall(rain_fall: number): string {
+    if(rain_fall<2)
+        return 'light'
+    return rain_fall>10? 'heavy': 'medium'
+}
+
+function converse_deg(deg: number): string {
+    return deg < 90 ? 'East' : 'West'
 }
 
